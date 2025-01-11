@@ -1,7 +1,15 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { assignmentsData, classesData, examsData, lessonsData, role, subjectsData } from "@/lib/data";
+import {
+  assignmentsData,
+  classesData,
+  examsData,
+  lessonsData,
+  role,
+  subjectsData,
+} from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -22,7 +30,6 @@ const columns = [
   {
     header: "Class",
     accessor: "class",
-
   },
   {
     header: "Teacher",
@@ -30,9 +37,9 @@ const columns = [
     className: "hidden md:table-cell",
   },
   {
-    header:"Due Date",
-    accessor:"dueDate",
-    className:"hidden md:table-cell",
+    header: "Due Date",
+    accessor: "dueDate",
+    className: "hidden md:table-cell",
   },
   {
     header: "Actions",
@@ -58,9 +65,10 @@ const ExamListPage = () => {
             </button>
           </Link>
           {role === "admin" && (
-            <button className=" w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-              <Image src={"/delete.png"} alt="" width={16} height={16} />
-            </button>
+            <>
+              <FormModal type="update" table="assignment" data={item} />
+              <FormModal type="delete" table="assignment" id={item.id} />
+            </>
           )}
         </div>
       </td>
@@ -71,7 +79,9 @@ const ExamListPage = () => {
     <div className=" bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Assignments</h1>
+        <h1 className="hidden md:block text-lg font-semibold">
+          All Assignments
+        </h1>
 
         <div className=" flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
@@ -83,11 +93,7 @@ const ExamListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src={"/sort.png"} width={14} height={14} alt="" />
             </button>
-            {role === "admin" && (
-              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-                <Image src={"/plus.png"} width={14} height={14} alt="" />
-              </button>
-            )}
+            {role === "admin" && <FormModal type="create" table="assignment" />}
           </div>
         </div>
       </div>
