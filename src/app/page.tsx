@@ -1,7 +1,6 @@
-const Homepage = () => {
-  return (
-    <div className=''>Homepage</div>
-  )
-}
+const Homepage = async () => {
+  
+  return <div className="">Homepage</div>;
+};
 
-export default Homepage
+export default Homepage;
