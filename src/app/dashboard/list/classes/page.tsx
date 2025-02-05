@@ -1,8 +1,8 @@
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { classesData, role, subjectsData } from "@/lib/data";
+import { role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Prisma, Teacher } from "@prisma/client";
@@ -32,10 +32,14 @@ const columns = [
     accessor: "supervisor",
     className: "hidden md:table-cell",
   },
-  {
-    header: "Actions",
-    accessor: "action",
-  },
+ ...(role === "admin"
+     ? [
+         {
+           header: "Actions",
+           accessor: "action",
+         },
+       ]
+     : []),
 ];
 
 const renderRow = (item: ClassList) => (
@@ -51,8 +55,8 @@ const renderRow = (item: ClassList) => (
       <div className="flex items-center gap-2">
         {role === "admin" && (
           <>
-            <FormModal type="update" table="class" data={item} />
-            <FormModal type="delete" table="class" id={item.id} />
+            <FormContainer type="update" table="class" data={item} />
+            <FormContainer type="delete" table="class" id={item.id} />
           </>
         )}
       </div>
@@ -123,7 +127,7 @@ const ClassListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src={"/sort.png"} width={14} height={14} alt="" />
             </button>
-            {role === "admin" && <FormModal type="create" table="class" />}
+            {role === "admin" && <FormContainer type="create" table="class" />}
           </div>
         </div>
       </div>

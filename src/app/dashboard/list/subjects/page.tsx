@@ -1,10 +1,10 @@
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, subjectsData } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { role } from "@/lib/utils";
 import { Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,10 +22,14 @@ const columns = [
     accessor: "teachers",
     className: "hidden md:table-cell",
   },
-  {
-    header: "Actions",
-    accessor: "action",
-  },
+ ...(role === "admin" 
+       ? [
+           {
+             header: "Actions",
+             accessor: "action",
+           },
+         ]
+       : []),
 ];
 
 const renderRow = (item: SubjectList) => (
@@ -39,8 +43,8 @@ const renderRow = (item: SubjectList) => (
       <div className="flex items-center gap-2">
         {role === "admin" && (
           <>
-            <FormModal table="subject" type="update" data={item} />
-            <FormModal table="subject" type="delete" id={item.id} />
+            <FormContainer table="subject" type="update" data={item} />
+            <FormContainer table="subject" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -107,7 +111,7 @@ const SubjectListPage =async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src={"/sort.png"} width={14} height={14} alt="" />
             </button>
-            {role === "admin" && <FormModal type="create" table="subject" />}
+            {role === "admin" && <FormContainer type="create" table="subject" />}
           </div>
         </div>
       </div>
