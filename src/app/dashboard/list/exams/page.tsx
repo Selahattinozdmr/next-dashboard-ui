@@ -1,13 +1,18 @@
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
+import { auth } from "@clerk/nextjs/server";
+
+
+const {userId,sessionClaims}=await auth();
+const role=(sessionClaims?.metadata as {role:string})?.role;
+const currentUserId=userId;
 
 type ExamList = Exam & { lesson: { subject: Subject; teacher: Teacher; class: Class } };
 
@@ -53,8 +58,8 @@ const renderRow = (item: ExamList) => (
       <div className="flex items-center gap-2">
         {(role === "admin" || role==="teacher") && (
           <>
-            <FormModal type="update" table="exam" data={item} />
-            <FormModal type="delete" table="exam" id={item.id} />
+            <FormContainer type="update" table="exam" data={item} />
+            <FormContainer type="delete" table="exam" id={item.id} />
           </>
         )}
       </div>
@@ -170,7 +175,7 @@ const ExamListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src={"/sort.png"} width={14} height={14} alt="" />
             </button>
-            {(role === "admin" || role==="teacher") && <FormModal type="create" table="exam" />}
+            {(role === "admin" || role==="teacher") && <FormContainer type="create" table="exam" />}
           </div>
         </div>
       </div>

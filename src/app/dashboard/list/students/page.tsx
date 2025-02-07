@@ -1,15 +1,18 @@
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Class, Prisma, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+const {userId,sessionClaims}=await auth();
+const role=(sessionClaims?.metadata as {role:string})?.role;
+const currentUserId=userId;
 type StudentList = Student & { class: Class };
 
 const columns = [
@@ -38,14 +41,14 @@ const columns = [
     accessor: "address",
     className: "hidden lg:table-cell",
   },
-  ...(role === "admin" 
-      ? [
-          {
-            header: "Actions",
-            accessor: "action",
-          },
-        ]
-      : []),
+  ...(role === "admin"
+    ? [
+        {
+          header: "Actions",
+          accessor: "action",
+        },
+      ]
+    : []),
 ];
 
 const renderRow = (item: StudentList) => (
@@ -74,8 +77,12 @@ const renderRow = (item: StudentList) => (
       <div className="flex items-center gap-2">
         {role === "admin" && (
           <>
-            <FormModal table="student" type="update" data={item} />
-            <FormModal table="student" type="delete" id={item.id} />
+            <Link href={`/dashboard/list/students/${item.id}`}>
+              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
+                <Image src="/view.png" alt="" width={16} height={16} />
+              </button>
+            </Link>
+            <FormContainer table="student" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -89,30 +96,29 @@ const StudentListPage = async ({
 }) => {
   const { page, ...qeryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
-
+ 
   // URL PARAMS CONDITIONS
 
-  const query:Prisma.StudentWhereInput = {}
+  const query: Prisma.StudentWhereInput = {};
   if (qeryParams) {
     for (const [key, value] of Object.entries(qeryParams)) {
       if (value !== undefined) {
         switch (key) {
           case "teacherId": {
-            query.class= {
-              lessons:{
+            query.class = {
+              lessons: {
                 some: {
-                  teacherId: value
-                }
-
-              }
-            }
+                  teacherId: value,
+                },
+              },
+            };
             break;
           }
           case "search": {
-            query.name={
+            query.name = {
               contains: value,
-              mode: "insensitive"
-            }
+              mode: "insensitive",
+            };
             break;
           }
           default:
@@ -132,7 +138,7 @@ const StudentListPage = async ({
       skip: ITEM_PER_PAGE * (p - 1),
     }),
     prisma.student.count({
-      where: query
+      where: query,
     }),
   ]);
 
@@ -156,7 +162,7 @@ const StudentListPage = async ({
               // <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               //   <Image src={"/plus.png"} width={14} height={14} alt="" />
               // </button>
-              <FormModal table="student" type="create" />
+              <FormContainer table="student" type="create" />
             )}
           </div>
         </div>
@@ -164,7 +170,7 @@ const StudentListPage = async ({
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
-      <Pagination page={p} count={count}/>
+      <Pagination page={p} count={count} />
     </div>
   );
 };

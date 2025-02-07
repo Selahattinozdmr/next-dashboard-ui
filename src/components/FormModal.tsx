@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteClass, deleteSubject, deleteTeacher } from "@/lib/actions";
+import { deleteClass, deleteExam, deleteStudent, deleteSubject, deleteTeacher } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,10 +13,10 @@ const deleteActionMap = {
   subject: deleteSubject,
   class: deleteClass,
   teacher: deleteTeacher,
-  student: deleteSubject,
+  student: deleteStudent,
   parent: deleteSubject,
   lesson: deleteSubject,
-  exam: deleteSubject,
+  exam: deleteExam,
   assignment: deleteSubject,
   result: deleteSubject,
   attendance: deleteSubject,
@@ -41,6 +41,9 @@ const StudentForm = dynamic(() => import("./forms/StudentForm"), {
 const ClassForm = dynamic(() => import("./forms/ClassForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const ExamForm = dynamic(() => import("./forms/ExamForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
 const forms: {
   [key: string]: (
@@ -58,14 +61,14 @@ const forms: {
       relatedData={relatedData}
     />
   ),
-  // student: (setOpen, type, data, relatedData) => (
-  //   <StudentForm
-  //     type={type}
-  //     data={data}
-  //     setOpen={setOpen}
-  //     relatedData={relatedData}
-  //   />
-  // ),
+  student: (setOpen, type, data, relatedData) => (
+    <StudentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
   subject: (setOpen, type, data, relatedData) => (
     <SubjectFom
       type={type}
@@ -76,6 +79,14 @@ const forms: {
   ),
   class: (setOpen, type, data, relatedData) => (
     <ClassForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  exam: (setOpen, type, data, relatedData) => (
+    <ExamForm
       type={type}
       data={data}
       setOpen={setOpen}
@@ -128,7 +139,7 @@ const FormModal = ({
     const router = useRouter();
     useEffect(() => {
       if (state.success) {
-        toast(`Subject deleted successfully!`);
+        toast(`${table} deleted successfully!`);
         router.refresh();
         setOpen(false);
       }
