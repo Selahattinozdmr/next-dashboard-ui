@@ -4,15 +4,12 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
-import { auth } from "@clerk/nextjs/server";
+import { currentUserId, role } from "@/lib/role";
 import { Announcement, Prisma } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 
 
-console.log(role)
 type AnnouncementList =Announcement & { class: { name: string } }; 
 
 const columns = [

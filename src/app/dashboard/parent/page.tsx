@@ -9,7 +9,7 @@ const ParentPage = () => {
       <div className="w-full xl:w-2/3">
         <div className=" h-full bg-white rounded-md  p-4">
           <h1 className=" text-xl font-semibold">Schedule (John Doe)</h1>
-          <BigCalendar />
+          <BigCalendar  data={[]} />
         </div>
       </div>
       {/* RIGHT */}
